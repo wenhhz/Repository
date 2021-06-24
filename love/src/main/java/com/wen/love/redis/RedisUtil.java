@@ -10,13 +10,13 @@ public class RedisUtil {
 
     @Qualifier("redisTemplate")
     @Autowired
-    private static StringRedisTemplate redisTemplate;
+    private StringRedisTemplate redisTemplate;
 
-    public static void set(String key,String value){
+    public void set(String key,String value){
         redisTemplate.opsForValue().set(key,value);
     }
 
-    public static String get(String key){
+    public String get(String key){
         return redisTemplate.opsForValue().get(key);
     }
 

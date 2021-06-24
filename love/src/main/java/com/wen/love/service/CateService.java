@@ -10,6 +10,6 @@ public interface CateService {
 
     GeneralDto insert(Cate cate);
 
-    int getRandomNum(int type);
+
 
 }
