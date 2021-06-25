@@ -22,7 +22,7 @@ public interface CateMapper {
     int insert(Cate cate);
 
 
-    @Select(" Select id from " + tableName + " where type = #{type}" )
+    @Select(" Select * from " + tableName + " where type = #{type}" )
     List<Cate> selectListByType(int type);
 
     @Select( selectPrefix + " where id = #{n} ")

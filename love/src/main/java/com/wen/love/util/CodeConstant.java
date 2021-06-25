@@ -11,5 +11,5 @@ public class CodeConstant {
     public static final String SELECT_FAIL_CODE="99999";
     public static final String SELECT_FAIL_MSG="菜谱查询失败";
 
-    public static final String CATE_PRE="LOVE_";
+    public static final String CATE_PRE="LOVE_CATES_";
 }

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <title>菜谱选择</title>
+</head>
+<body>
+<h1 style="color: blue;text-align: center">好好吃饭，荤素搭配哦</h1>
+<center><button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal" style="width: 120px;height: 50px">添加菜谱</button></center>
+<!--模态框-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">添加菜谱</h4>
+            </div>
+            <div class="modal-body">
+                <label for="name">菜谱名称</label>
+                <input type="text" class="form-control" id="name" placeholder="请输入菜谱名称">
+                <label for="name">菜谱类型</label>
+                <input type="text" class="form-control" id="type" placeholder="请输入菜谱类型:1或者2 ，1-荤菜  2-素菜">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button id="addCate" type="button" class="btn btn-primary">确认添加</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<table class="table table-striped" style="text-align: center">
+<caption style="text-align: center;color: gold; font-size: large" >随机选择菜谱哦</caption>
+    <thead>
+        <tr>
+            <td>菜谱名</td>
+            <td>菜谱类型</td>
+            <td>操作</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <input type="text" id="meat">
+            </td>
+            <td style="color: cornflowerblue">荤菜哦</td>
+            <td>
+                <button id="search1" type="button" class="btn btn-primary">随机搜索</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" id="vegetable">
+            </td>
+            <td style="color: lawngreen">素菜哦</td>
+            <td>
+                <button id="search2" type="button" class="btn btn-primary">随即搜索</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div id="warn" class="alert alert-warning alert-dismissable" style="display: none;width: 300px;text-align: center ; left: 500px;margin: auto">
+    <button type="button" class="close" data-dismiss="alert"
+            aria-hidden="true">
+        &times;
+    </button>
+    抱歉！菜谱查询失败，请再次查询。
+</div>
+<div id="success" class="alert alert-success alert-dismissable" style="display: none;width: 300px;text-align: center ; left: 500px;margin: auto">
+    <button type="button" class="close" data-dismiss="alert"
+            aria-hidden="true">
+        &times;
+    </button>
+    成功！菜谱成功上传。
+</div>
+<div id="error" class="alert alert-danger alert-dismissable" style="display: none;width: 300px;text-align: center ; left: 500px;margin: auto">
+    <button type="button" class="close" data-dismiss="alert"
+            aria-hidden="true">
+        &times;
+    </button>
+    错误！菜谱已经存在。
+</div>
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script type="text/javascript" src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script type="text/javascript" src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script>
+
+    //添加菜谱
+    $("#addCate").click(function () {
+        var name = $("#name").val();
+        var type = $("#type").val();
+        if (type == 1 || type == 2){
+            $.ajax({
+                url:"love/insert",
+                data:{"name":name,"type":type},
+                type:"post",
+                success:function (result) {
+                    $("#myModal").modal('hide');
+                    if(result.retCode == "00000"){
+                        $("#success").attr("style","display:block;width: 300px;text-align: center ; left: 500px;margin: auto");
+                        setTimeout(function () {
+                            $("#success").hide();
+                        },1000);
+                    }else {
+                        $("#error").attr("style","display:block;width: 300px;text-align: center ; left: 500px;margin: auto");
+                        setTimeout(function () {
+                            $("#error").hide();
+                        },1000);
+                    }
+                }
+            })
+        }else {
+            alert("请输入正确的菜谱类型  1 或者 2");
+        }
+    });
+
+
+
+    //搜索荤菜
+    $("#search1").click(function () {
+        $.ajax({
+            url:"love/select",
+            type:"post",
+            data:"type="+1,
+            success:function (result) {
+                if(result.retCode == "000000"){
+                    $("#meat").val(result.item.name);
+                }else {
+                    $("#warn").attr("style","display:block;width: 300px;text-align: center ; left: 500px;margin: auto");
+                }
+            }
+        })
+    });
+
+    //搜索素菜
+    $("#search2").click(function () {
+        $.ajax({
+            url:"love/select",
+            type:"post",
+            data:"type="+2,
+            success:function (result) {
+                if(result.retCode == "000000"){
+                    $("#vegetable").val(result.item.name);
+                }else {
+                    $("#warn").attr("style","display:block;width: 300px;text-align: center ; left: 500px;margin: auto");
+                }
+            }
+        })
+    });
+
+
+</script>
+</body>
+</html>
