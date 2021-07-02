@@ -9,6 +9,8 @@ import com.wen.love.redis.RedisUtil;
 import com.wen.love.service.CateService;
 import com.wen.love.util.CodeConstant;
 import com.wen.love.util.GeneralDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -20,11 +22,10 @@ import java.util.Random;
 @Service
 public class CateServiceImpl implements CateService {
 
+    private Logger logger = LoggerFactory.getLogger(CateServiceImpl.class);
+
     @Resource
     private CateMapper mapper;
-
-    @Autowired
-    private CateService cateService;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -37,23 +38,23 @@ public class CateServiceImpl implements CateService {
         Cate cate1 = new Cate();
         try {
             if(cate != null && cate.getType() != 0){
-                System.out.println("开始查询菜谱");
+                logger.info("开始查询菜谱");
                 Random random = new Random();
                 String arrays = redisUtil.get(CodeConstant.CATE_PRE + cate.getType());
                 cates = JSONObject.parseArray(arrays,Cate.class);
                 if(cates == null || cates.size() == 0){
-                    System.out.println("缓存中不存在菜谱，从数据库中查找");
+                    logger.info("缓存中不存在菜谱，从数据库中查找");
                     cates = mapper.selectListByType(cate.getType());
                     redisUtil.set(CodeConstant.CATE_PRE+cate.getType(),JSONObject.toJSONString(cates));
                 }
                 num = random.nextInt(cates.size());
-                System.out.println("随机获取到的菜谱id："+num);
+                logger.info("随机获取到的菜谱id："+num);
                 do{
-                    System.out.println("循环获取确保获取到了菜谱");
+                    logger.info("循环获取确保获取到了菜谱");
                     cate1 = cates.get(num);
                     num = random.nextInt(cates.size());
                 } while (cate1 == null);
-                System.out.println(cate1);
+                logger.info("查询到的菜谱" + cate1);
                 generalDto.setItem(cate1);
                 generalDto.setRetCode(CodeConstant.SELECT_SUCCESS_CODE);
                 generalDto.setRetMsg(CodeConstant.SELECT_SUCCESS_MSG);
@@ -63,7 +64,7 @@ public class CateServiceImpl implements CateService {
                 generalDto.setRetMsg(CodeConstant.SELECT_FAIL_MSG);
             }
         }catch (Exception e){
-            System.out.println("菜谱查询异常："+e);
+            logger.info("菜谱查询异常："+e);
             e.printStackTrace();
         }
         return generalDto;
